@@ -1,0 +1,194 @@
+package View;
+
+import java.awt.Color;
+import java.awt.EventQueue;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.List;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+
+import Model.Cliente;
+import Model.ClienteLivro;
+import Model.Livro;
+import dao.DAO;
+
+public class JCadastroClienteLivro extends JFrame {
+
+    private static final long serialVersionUID = 1L;
+    private JPanel contentPane;
+    public static void main(String[] args) {
+        EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                try {
+                    JCadastroClienteLivro frame = new JCadastroClienteLivro(null, null);
+                    frame.setVisible(true);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    public JCadastroClienteLivro(Livro livroSelecionado, JLivroClienteView jLivroClienteView) {
+        DAO dao = new DAO();
+
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setBounds(100, 100, 450, 320);
+
+        contentPane = new JPanel();
+        contentPane.setBackground(new Color(255, 255, 255));
+        contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+        setContentPane(contentPane);
+        contentPane.setLayout(null);
+
+        // Labels
+        JLabel lblNewLabel = new JLabel("Livro");
+        lblNewLabel.setBounds(37, 23, 45, 13);
+        contentPane.add(lblNewLabel);
+
+        JLabel lblNewLabel_3_1 = new JLabel("Locário");
+        lblNewLabel_3_1.setBounds(37, 81, 45, 13);
+        contentPane.add(lblNewLabel_3_1);
+
+        // ComboBox para Livros
+        JComboBox<String> comboBoxLivro = new JComboBox<>();
+        comboBoxLivro.setBounds(37, 48, 367, 22);
+        contentPane.add(comboBoxLivro);
+        
+        JComboBox<String> comboBoxLocario = new JComboBox<>();
+        comboBoxLocario.setBounds(37, 105, 367, 22);
+        contentPane.add(comboBoxLocario);
+        
+        // Preenche o ComboBox de livros
+        preencherComboBoxLivros(comboBoxLivro);
+        preencherComboBoxClientes(comboBoxLocario);
+
+
+        // Botões
+        JButton btnNewButton = new JButton("Alterar status");
+        btnNewButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+            	
+            	String idClienteSelecionado = (String) comboBoxLocario.getSelectedItem();
+            	String livroSelecionado = (String) comboBoxLivro.getSelectedItem();
+            	if ((idClienteSelecionado == null) || (livroSelecionado == null)) {
+            		btnNewButton.setEnabled(false);
+            	}else {
+            		
+            		List<Livro> livros = dao.obterTitulosLivros();
+            		for (Livro livro: livros) {
+            			System.out.println(livro.getIDLivro());
+            			System.out.println(livroSelecionado);
+            			if ( livroSelecionado.equals(livro.getIDLivro())) {
+            				System.out.println("teste");
+            				Livro livroBD = new Livro (livro.getIDLivro(), livro.getTitulo(), livro.getAutor(), livro.getAno(), livro.getEditora(), livro.getIsbn(), idClienteSelecionado);
+            				dao.alterarLivro(livroBD.getIDLivro(), livroBD);
+            				System.out.println(livro.getTitulo());
+            				
+            				break;
+            				
+            			}
+            			
+            			}
+            		}
+        		
+        	} });
+
+            		
+            		
+            		
+
+            	/*
+            	 * 
+            	 * ClienteLivro livroSelecionado = (ClienteLivro) comboBoxLivro.getSelectedItem();
+            	ClienteLivro locatarioSelecionado = (ClienteLivro) comboBoxLocario.getSelectedItem();
+
+                if (livroSelecionado != null && locatarioSelecionado != null) {
+                    Livro livro = new Livro(
+                            livroSelecionado.getId(),  // Aqui você obtém o ID do livro selecionado
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            locatarioSelecionado.getId()  // Aqui você obtém o ID do locatário selecionado
+                    );
+
+                    if (livroSelecionado == null) {
+                        if (livroSelecionado != null && locatarioSelecionado != null) {
+                            ClienteLivro clienteSelecionado = (ClienteLivro) comboBoxLocario.getSelectedItem();
+                            dao.alterarLivroCliente(livroSelecionado.getId(), livro, clienteSelecionado);  // Passando null para o ID do livro, pois é uma inserção
+                            abrirTelaPrincipal(jLivroClienteView);
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Confira o nome e titulo escolhido");
+                        }
+                    } else {
+                    	 if (!"".equals(livroSelecionado.getId()) && !"".equals(locatarioSelecionado.getId())) {
+                    		 ClienteLivro clienteSelecionado = (ClienteLivro) comboBoxLocario.getSelectedItem();
+                             dao.alterarLivroCliente(livroSelecionado.getId(), livro, clienteSelecionado);  // Passando null para o ID do livro, pois é uma inserção
+                            abrirTelaPrincipal(jLivroClienteView);
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Confira o nome e titulo escolhido");
+                        }
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Selecione um livro e um locatário");
+                }*/
+            	
+            	
+           
+
+
+        btnNewButton.setBounds(311, 252, 85, 21);
+        contentPane.add(btnNewButton);
+
+        JButton btnNewButton_1 = new JButton("Excluir");
+        btnNewButton_1.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                dao.excluirLivro(livroSelecionado.getIDLivro());
+                abrirTelaPrincipal(jLivroClienteView);
+            }
+        });
+        btnNewButton_1.setForeground(new Color(255, 255, 255));
+        btnNewButton_1.setBackground(new Color(255, 0, 0));
+        btnNewButton_1.setBounds(29, 251, 89, 23);
+        btnNewButton_1.setVisible(false);
+        contentPane.add(btnNewButton_1);
+
+    }
+
+
+    private void preencherComboBoxLivros(JComboBox<String> comboBoxLivro) {
+        DAO dao = new DAO();
+        List<Livro> titulosLivros = dao.obterTitulosLivros();
+
+        for (Livro tituloLivro : titulosLivros) {
+            comboBoxLivro.addItem(tituloLivro.getIDLivro());
+        }
+    }
+
+    private void preencherComboBoxClientes(JComboBox<String> comboBoxLocario) {
+        DAO dao = new DAO();
+        List<Cliente> nomesClientes = dao.obterClientes();
+
+        for (Cliente nomeCliente : nomesClientes) {
+            comboBoxLocario.addItem(nomeCliente.getID());
+        }
+    }
+
+
+    private void abrirTelaPrincipal(JLivroClienteView jLivroClienteView) {
+        jLivroClienteView.dispose();
+        dispose();
+        jLivroClienteView = new JLivroClienteView();
+        jLivroClienteView.setLocationRelativeTo(jLivroClienteView);
+        jLivroClienteView.setVisible(true);
+    }
+}

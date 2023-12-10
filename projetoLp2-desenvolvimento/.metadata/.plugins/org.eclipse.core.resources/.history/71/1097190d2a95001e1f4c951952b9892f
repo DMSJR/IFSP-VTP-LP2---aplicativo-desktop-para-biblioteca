@@ -1,0 +1,474 @@
+package dao;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Struct;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.JOptionPane;
+
+import Controller.Conexao;
+import Model.Cliente;
+import Model.ClienteLivro;
+import Model.Livro;
+import Model.Usuario;
+
+public class DAO {
+	private static PreparedStatement preparedStatement = null;
+	private static ResultSet resultSet = null;
+
+	private static String CADASTRAR_CLIENTE = " INSERT INTO CLIENTE  "
+			+ " (ID, NOME, CPF, EMAIL, TELEFONE, ENDERECO) " + " VALUES (NULL, ?, ?, ?, ?, ?) ";
+
+	private static String CONSULTAR_CLIENTE = " SELECT * FROM CLIENTE  " + " WHERE ID = ? ";
+
+	private static String ALTERAR_CLIENTE = " UPDATE CLIENTE  SET "
+			+ " NOME = ?, CPF = ?, EMAIL = ?, TELEFONE = ?, ENDERECO = ? " + " WHERE ID = ? ";
+
+	private static String EXCLUIR_CLIENTE = " DELETE FROM CLIENTE  " + " WHERE ID = ? ";
+
+	private static String LISTAR_CLIENTES = " SELECT * FROM CLIENTE  " + " WHERE 1=1 ";
+
+	private static String CONSULTAR_USUARIO = " SELECT USUARIO, SENHA  " + " FROM USUARIO " + " WHERE USUARIO = ? "
+			+ " AND SENHA = ? ";
+
+	
+	//Comandos BD Livro
+	private static String CADASTRAR_LIVRO = " INSERT INTO LIVRO "
+			+ "(IDLIVRO, TITULO, AUTOR, ANO, EDITORA, ISBN, IDLOCARIO) " + "VALUES (NULL, ?, ?, ?, ?, ?, ?) ";
+	
+	private static String CONSULTAR_LIVRO = " SELECT * FROM LIVRO " + "WHERE IDLIVRO = ? ";
+	
+	private static String ALTERAR_LIVRO = "UPDATE LIVRO SET "
+			+ " TITULO = ?, AUTOR = ?, ANO = ?, EDITORA = ?, ISBN = ?, IDLOCARIO = ? "+ "WHERE IDLIVRO = ? ";
+	
+	private static String EXCLUIR_LIVRO = " DELETE FROM LIVRO " + " WHERE IDLIVRO = ? ";
+	
+	private static String LISTAR_LIVROS = " SELECT * FROM LIVRO " + " WHERE 1=1";
+			
+	public DAO() {
+
+	}
+
+	public Cliente consultarCliente(String ID) throws Exception {
+		Connection connection = Conexao.getInstancia().abrirConexao();
+		Cliente cliente  = null;
+		String query = CONSULTAR_CLIENTE;
+		
+		try {
+		preparedStatement = connection.prepareStatement(query);
+		
+		int i = 1;
+		preparedStatement.setString(i++, ID);
+		
+		resultSet = preparedStatement.executeQuery();
+		while (resultSet.next()){
+	
+			cliente = new Cliente(resultSet.getString("ID"),
+					resultSet.getString("nome"),
+					resultSet.getString("CPF"),
+					resultSet.getString("EMAIL"),
+					resultSet.getString("TELEFONE"),
+					resultSet.getString("ENDERECO"));
+		}
+		
+	}catch(SQLException e) {
+		e.printStackTrace();
+	}finally {
+		fecharConexao();
+	}
+		if (cliente == null) {
+			JOptionPane.showMessageDialog(null, "Não foi possível localizar o cliente selecionado ", "", JOptionPane.WARNING_MESSAGE);
+			throw new Exception("Não foi possível localizar o cliente selecionado");
+		}
+		return cliente;
+	}
+	
+	public Livro consultarLivro(String IDLivro) throws Exception {
+		Connection connection = Conexao.getInstancia().abrirConexao();
+		Livro livro  = null;
+		String query = CONSULTAR_LIVRO;
+		
+		try {
+		preparedStatement = connection.prepareStatement(query);
+		
+		int i = 1;
+		preparedStatement.setString(i++, IDLivro);
+		
+		resultSet = preparedStatement.executeQuery();
+		while (resultSet.next()){
+			
+			livro = new Livro(resultSet.getString("IDLIVRO"),
+					resultSet.getString("TITULO"),
+					resultSet.getString("AUTOR"),
+					resultSet.getString("ANO"),
+					resultSet.getString("EDITORA"),
+					resultSet.getString("ISBN"),
+					resultSet.getString("IDLOCARIO"));
+		}
+		
+	}catch(SQLException e) {
+		e.printStackTrace();
+	}finally {
+		fecharConexao();
+	}
+		if (livro == null) {
+			JOptionPane.showMessageDialog(null, "Não foi possível localizar o livro selecionado ", "", JOptionPane.WARNING_MESSAGE);
+			throw new Exception("Não foi possível localizar o livro selecionado");
+		}
+		return livro;
+	}
+	public void cadastrarLivro(Livro livro)  {
+			Connection connection = Conexao.getInstancia().abrirConexao();
+			
+			String query = CADASTRAR_LIVRO;
+			
+			try {
+			preparedStatement = connection.prepareStatement(query);
+			
+			int i = 1;
+			preparedStatement.setString(i++, livro.getTitulo());
+			preparedStatement.setString(i++, livro.getAutor());
+			preparedStatement.setString(i++, livro.getAno());
+			preparedStatement.setString(i++, livro.getEditora());
+			preparedStatement.setString(i++, livro.getIsbn());
+			preparedStatement.setString(i++, livro.getIDLocatario());
+			
+			preparedStatement.execute();
+			//connection.commit();
+			
+			JOptionPane.showMessageDialog(null, "Livro incluído com sucesso");
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}finally {
+			fecharConexao();
+		}}
+	
+	public void cadastrarCliente(Cliente cliente)  {
+		Connection connection = Conexao.getInstancia().abrirConexao();
+		
+		String query = CADASTRAR_CLIENTE;
+		
+		try {
+		preparedStatement = connection.prepareStatement(query);
+		
+		int i = 1;
+		preparedStatement.setString(i++, cliente.getNome());
+		preparedStatement.setString(i++, cliente.getCPF());
+		preparedStatement.setString(i++, cliente.geteMail());
+		preparedStatement.setString(i++, cliente.getTelefone());
+		preparedStatement.setString(i++, cliente.getEndereco());
+		
+		preparedStatement.execute();
+		//connection.commit();
+		
+		JOptionPane.showMessageDialog(null, "Cliente incluído com sucesso");
+	}catch(SQLException e) {
+		e.printStackTrace();
+	}finally {
+		fecharConexao();
+	}}
+
+	public void alterarLivro(String IDLivro, Livro livro) {
+		Connection connection = Conexao.getInstancia().abrirConexao();
+		
+		String query = ALTERAR_LIVRO;
+		
+		try {
+		preparedStatement = connection.prepareStatement(query);
+		
+		int i = 1;
+		preparedStatement.setString(i++, livro.getTitulo());
+		preparedStatement.setString(i++, livro.getAutor());
+		preparedStatement.setString(i++, livro.getAno());
+		preparedStatement.setString(i++, livro.getEditora());
+		preparedStatement.setString(i++, livro.getIsbn());
+		preparedStatement.setString(i++, livro.getIDLocatario());
+		preparedStatement.setString(i++, IDLivro);
+		
+		preparedStatement.execute();
+		//connection.commit();
+		
+		JOptionPane.showMessageDialog(null, "Livro alterado com sucesso");
+	}catch(SQLException e) {
+		e.printStackTrace();
+	}finally {
+		fecharConexao();
+	}}
+	
+	public void alterarCliente(String ID, Cliente cliente) {
+		Connection connection = Conexao.getInstancia().abrirConexao();
+		
+		String query = ALTERAR_CLIENTE;
+		
+		try {
+		preparedStatement = connection.prepareStatement(query);
+		
+		int i = 1;
+		preparedStatement.setString(i++, cliente.getNome());
+		preparedStatement.setString(i++, cliente.getCPF());
+		preparedStatement.setString(i++, cliente.geteMail());
+		preparedStatement.setString(i++, cliente.getTelefone());
+		preparedStatement.setString(i++, cliente.getEndereco());
+		preparedStatement.setString(i++, ID);
+		
+		preparedStatement.execute();
+		//connection.commit();
+		
+		JOptionPane.showMessageDialog(null, "Cliente alterado com sucesso");
+	}catch(SQLException e) {
+		e.printStackTrace();
+	}finally {
+		fecharConexao();
+	}}
+
+	public void excluirCliente(String ID)  {
+		Connection connection = Conexao.getInstancia().abrirConexao();
+		
+		String query = EXCLUIR_CLIENTE;
+		
+		try {
+		preparedStatement = connection.prepareStatement(query);
+		
+		int i = 1;
+		
+		preparedStatement.setString(i++, ID);
+		
+		preparedStatement.execute();
+		//connection.commit();
+		
+		JOptionPane.showMessageDialog(null, "Cliente excluído com sucesso");
+	}catch(SQLException e) {
+		e.printStackTrace();
+	}finally {
+		fecharConexao();
+	}}
+	
+	public void excluirLivro(String IDLivro)  {
+		Connection connection = Conexao.getInstancia().abrirConexao();
+		
+		String query = EXCLUIR_LIVRO;
+		
+		try {
+		preparedStatement = connection.prepareStatement(query);
+		
+		int i = 1;
+		
+		preparedStatement.setString(i++, IDLivro);
+		
+		preparedStatement.execute();
+		//connection.commit();
+		
+		JOptionPane.showMessageDialog(null, "Livro excluído com sucesso");
+	}catch(SQLException e) {
+		e.printStackTrace();
+	}finally {
+		fecharConexao();
+	}}
+
+	private void fecharConexao() {
+		try {
+			if (resultSet != null) {
+				resultSet.close();
+			}
+			if (preparedStatement != null) {
+				preparedStatement.close();
+			}
+			Conexao.getInstancia().fecharConexao();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	public ArrayList<Cliente> listarCliente() throws Exception {
+		Connection connection = Conexao.getInstancia().abrirConexao();
+		ArrayList<Cliente> clientes = new ArrayList<>();
+		
+		
+		String query = LISTAR_CLIENTES;
+		
+		try {
+		preparedStatement = connection.prepareStatement(query);
+		
+		
+		
+		resultSet = preparedStatement.executeQuery();
+		while (resultSet.next()){
+	
+			clientes.add( new Cliente(resultSet.getString("ID"),
+					resultSet.getString("nome"),
+					resultSet.getString("CPF"),
+					resultSet.getString("EMAIL"),
+					resultSet.getString("TELEFONE"),
+					resultSet.getString("ENDERECO")));
+		}
+		
+	}catch(SQLException e) {
+		e.printStackTrace();
+	}finally {
+		fecharConexao();
+	}
+		if (clientes.size() < 0) {
+			JOptionPane.showMessageDialog(null, "Não há clientes cadastrados ", "", JOptionPane.WARNING_MESSAGE);
+			throw new Exception("Não há clientes cadastrados");
+		}
+		return clientes;
+	}
+	
+	public ArrayList<Livro> listarLivro() throws Exception {
+		Connection connection = Conexao.getInstancia().abrirConexao();
+		ArrayList<Livro> livros = new ArrayList<>();
+		
+		
+		String query = LISTAR_LIVROS;
+		
+		try {
+		preparedStatement = connection.prepareStatement(query);
+		
+		
+		
+		resultSet = preparedStatement.executeQuery();
+		while (resultSet.next()){
+	
+			livros.add( new Livro(resultSet.getString("IDLIVRO"),
+					resultSet.getString("TITULO"),
+					resultSet.getString("AUTOR"),
+					resultSet.getString("ANO"),
+					resultSet.getString("EDITORA"),
+					resultSet.getString("ISBN"),
+					resultSet.getString("IDLOCARIO")));
+			
+
+		}
+		
+	}catch(SQLException e) {
+		e.printStackTrace();
+	}finally {
+		fecharConexao();
+	}
+		if (livros.size() < 0) {
+			JOptionPane.showMessageDialog(null, "Não há livros cadastrados ", "", JOptionPane.WARNING_MESSAGE);
+			throw new Exception("Não há livros cadastrados");
+		}
+		return livros;
+	}
+
+	
+	public Usuario consultarUsuario(String nomeUsuario, String senhaCriptografada) throws Exception {
+	Connection connection = Conexao.getInstancia().abrirConexao();
+	Usuario usuario  = null;
+	String query = CONSULTAR_USUARIO;
+	
+	try {
+	preparedStatement = connection.prepareStatement(query);
+	
+	int i = 1;
+	preparedStatement.setString(i++, nomeUsuario);
+	preparedStatement.setString(i++, senhaCriptografada);
+	
+	resultSet = preparedStatement.executeQuery();
+	while (resultSet.next()){
+
+		usuario = new Usuario(resultSet.getInt("ID"),
+				resultSet.getString("USUARIO"),
+				resultSet.getString("SENHA"));
+				
+	}
+	
+}catch(SQLException e) {
+	e.printStackTrace();
+}finally {
+	fecharConexao();
+}
+	if (usuario == null) {
+		JOptionPane.showMessageDialog(null, "Não foi possível localizar o usuario selecionado ", "", JOptionPane.WARNING_MESSAGE);
+		throw new Exception("Não foi possível localizar o usuario selecionado");
+	}
+	return usuario;
+}
+	
+	public List<Livro> obterTitulosLivros() {
+	    List<Livro> titulosLivros = new ArrayList<>();
+
+	    try (Connection connection = Conexao.getInstancia().abrirConexao();
+	         PreparedStatement preparedStatement = connection.prepareStatement(LISTAR_LIVROS);
+	         ResultSet resultSet = preparedStatement.executeQuery()) {
+
+	        while (resultSet.next()) {
+	            String idLivro = resultSet.getString("IDLIVRO");
+	            String tituloLivro = resultSet.getString("TITULO");
+	            String autor = resultSet.getString("AUTOR");
+	            String ano = resultSet.getString ("ANO");
+	            String editora = resultSet.getString("EDITORA");
+	            String isbn = resultSet.getString("ISBN");
+	            
+	            Livro livro = new Livro(idLivro, tituloLivro, autor, ano, editora, isbn, null );
+	            titulosLivros.add(livro);
+	        }
+	        
+
+	    } catch (SQLException e) {
+	        e.printStackTrace(); // ou trate a exceção de acordo com a sua lógica de negócios
+	    }
+
+	    return titulosLivros;
+	}
+
+	public List<Cliente> obterClientes() {
+	    List<Cliente> nomesClientes = new ArrayList<>();
+
+	    try (Connection connection = Conexao.getInstancia().abrirConexao();
+	         PreparedStatement preparedStatement = connection.prepareStatement(LISTAR_CLIENTES);
+	         ResultSet resultSet = preparedStatement.executeQuery()) {
+
+	        while (resultSet.next()) {
+	            String idCliente = resultSet.getString("ID");
+	            String nomeCliente = resultSet.getString("NOME");
+	            nomesClientes.add(new Cliente(idCliente, nomeCliente, null, null, null, null));
+	        }
+
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+
+	    return nomesClientes;
+	}
+	
+	public void alterarLivroCliente(String IDLivro, Livro livro, ClienteLivro clienteSelecionado) {
+	    Connection connection = Conexao.getInstancia().abrirConexao();
+
+	    String query = ALTERAR_LIVRO;
+
+	    try {
+	        preparedStatement = connection.prepareStatement(query);
+
+	        int i = 1;
+	        preparedStatement.setString(i++, livro.getTitulo());
+	        preparedStatement.setString(i++, livro.getAutor());
+	        preparedStatement.setString(i++, livro.getAno());
+	        preparedStatement.setString(i++, livro.getEditora());
+	        preparedStatement.setString(i++, livro.getIsbn());
+
+	        // Verifica se o cliente é não nulo
+	        if (clienteSelecionado != null) {
+	            preparedStatement.setString(i++, clienteSelecionado.getId());
+	        } else {
+	            preparedStatement.setNull(i++, java.sql.Types.NULL);
+	        }
+
+	        preparedStatement.setString(i++, IDLivro);
+
+	        preparedStatement.execute();
+
+	        JOptionPane.showMessageDialog(null, "Livro alterado com sucesso");
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    } finally {
+	        fecharConexao();
+	    }
+	}
+
+
+}
+

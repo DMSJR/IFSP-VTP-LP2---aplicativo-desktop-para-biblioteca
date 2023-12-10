@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>.org.eclipse.jdt.core.external.folders</name>
+	<comment></comment>
+	<projects>
+	</projects>
+	<buildSpec>
+	</buildSpec>
+	<natures>
+	</natures>
+	<linkedResources>
+		<link>
+			<name>.link1</name>
+			<type>2</type>
+			<location>C:/Users/marqu/.p2/pool/plugins/com.jaspersoft.studio.bundles.batik_1.16.0.b01</location>
+		</link>
+		<link>
+			<name>.link2</name>
+			<type>2</type>
+			<location>C:/Users/marqu/.p2/pool/plugins/com.jaspersoft.studio.bundles.poi_5.2.2.b02</location>
+		</link>
+	</linkedResources>
+</projectDescription>

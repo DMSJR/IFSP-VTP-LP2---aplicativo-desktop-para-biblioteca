@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+    <fullyQualifiedTypeName name="Model.Cliente"/>
+    <fullyQualifiedTypeName name="java.sql.Struct"/>
+    <fullyQualifiedTypeName name="Controller.Criptografia"/>
+    <fullyQualifiedTypeName name="Model.Usuario"/>
+    <fullyQualifiedTypeName name="dao.DAO"/>
+    <fullyQualifiedTypeName name="Controller.GeraRelatorio"/>
+    <fullyQualifiedTypeName name="Controller.Backup"/>
+</qualifiedTypeNameHistroy>

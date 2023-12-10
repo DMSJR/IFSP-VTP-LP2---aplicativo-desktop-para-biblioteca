@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<items>
+	<item id="NodeList/SQLiteTableColumn">
+		<column name="Nome da coluna" visible="true" order="0" width="124"/>
+		<column name="#" visible="true" order="1" width="100"/>
+		<column name="Tipo de dados" visible="true" order="2" width="167"/>
+		<column name="Cumprimento" visible="true" order="3" width="105"/>
+		<column name="Não nulo" visible="true" order="4" width="100"/>
+		<column name="Auto Incrementar" visible="true" order="5" width="129"/>
+		<column name="Padrão" visible="true" order="6" width="100"/>
+		<column name="Descrição" visible="true" order="7" width="100"/>
+	</item>
+	<item id="Suggestion/NodeList/SQLiteTableColumn">
+		<column name="Nome da coluna" visible="true" order="0" width="208"/>
+		<column name="#" visible="true" order="1" width="117"/>
+		<column name="Tipo de dados" visible="false" order="2" width="110"/>
+		<column name="Cumprimento" visible="false" order="3" width="105"/>
+		<column name="Não nulo" visible="false" order="4" width="100"/>
+		<column name="Auto Incrementar" visible="false" order="5" width="129"/>
+		<column name="Padrão" visible="false" order="6" width="100"/>
+		<column name="Descrição" visible="true" order="2" width="163"/>
+	</item>
+</items>
